@@ -2,8 +2,11 @@
 name: Publish to Github Package
 
 on:
-  release:
-    types: [created]
+  # release:
+  #   types: [created]
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   publish-ghpkg:
@@ -18,3 +21,12 @@ jobs:
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
